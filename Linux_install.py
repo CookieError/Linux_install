@@ -18,7 +18,7 @@ def main():
     set_debug_file()
     get_commands()
 
-    PASSWORD = getpass.unix_getpass("Please enter your password")
+    PASSWORD = getpass.unix_getpass("Please enter your password: ")
 
     if MODE == "redhat":
         temp = read_file()

@@ -1,5 +1,5 @@
 import argparse
-import getpass               # this has not be tested with a deb system
+import getpass
 import os
 import logging
 import time

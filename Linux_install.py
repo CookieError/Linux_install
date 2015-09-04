@@ -1,6 +1,6 @@
 import argparse
-import getpass               # this has not be tested with a deb system / change auto to debian
-import os                    # add an if so the update and upgrade will not run everytime
+import getpass               # this has not be tested with a deb system
+import os
 import logging
 import time
 import datetime
@@ -10,6 +10,7 @@ MODE = None
 REDHAT = None
 FILEPATH = None
 PASSWORD = None
+FIRST_RUN = True
 __version__ = "0.1.0"
 
 
@@ -36,19 +37,23 @@ def main():
 
 
 def debian_install(list_of_command):
+    global FIRST_RUN
     my_switch = True
     i = 0
     logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run debian_install() ')
 
     while my_switch:
         try:
-            command = " apt-get -y update"
-            logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run ' + str(command))
-            p = os.system('echo %s|sudo -S %s' % (PASSWORD, command))
+            if FIRST_RUN:
+                command = " apt-get -y update"
+                logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run ' + str(command))
+                p = os.system('echo %s|sudo -S %s' % (PASSWORD, command))
 
-            command = " apt-get -y upgrade " + list_of_command[i]
-            logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run ' + str(command))
-            p = os.system('echo %s|sudo -S %s' % (PASSWORD, command))
+                command = " apt-get -y upgrade " + list_of_command[i]
+                logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run ' + str(command))
+                p = os.system('echo %s|sudo -S %s' % (PASSWORD, command))
+
+                FIRST_RUN = False
 
             command = " apt-get -y install " + list_of_command[i]
             logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run ' + str(command))
@@ -119,15 +124,18 @@ def read_file():
 
 
 def red_hat_install(list_of_packages):
+    global FIRST_RUN
     my_switch = True
     i = 0
     logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run red_hat_install() ')
 
     while my_switch:
         try:
-            command = "yum -y update"
-            logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run ' + str(command))
-            p = os.system('echo %s|sudo -S %s' % (PASSWORD, command))
+            if FIRST_RUN:
+                command = "yum -y update"
+                logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run ' + str(command))
+                p = os.system('echo %s|sudo -S %s' % (PASSWORD, command))
+                FIRST_RUN = False
 
             command = "yum -y install " + list_of_packages[i]
             logging.debug(str(datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')) + ' about to run ' + str(command))
